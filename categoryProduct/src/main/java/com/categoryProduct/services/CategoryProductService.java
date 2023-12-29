@@ -1,6 +1,8 @@
 package com.categoryProduct.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,9 +24,14 @@ public class CategoryProductService {
 
 	// Category CRUD operations
 
-	public Iterable<Category> getAllCategories() {
-		return categoryRepository.findAll();
+	//	public Iterable<Category> getAllCategories() {
+	//		return categoryRepository.findAll();
+	//	}
+
+	public Page<Category> getAllCategories(Pageable pageable) {
+		return categoryRepository.findAll(pageable);
 	}
+
 
 	public Category createCategory(Category category) {
 		return categoryRepository.save(category);
@@ -56,8 +63,13 @@ public class CategoryProductService {
 
 	// Product CRUD operations
 
-	public Iterable<Product> getAllProducts() {
-		return productRepository.findAll();
+	//	public Iterable<Product> getAllProducts() {
+	//		return productRepository.findAll();
+	//	}
+
+
+	public Page<Product> getAllProducts(Pageable pageable) {
+		return productRepository.findAll(pageable);
 	}
 
 	public Product createProduct(int category_id,Product product) {
@@ -86,6 +98,10 @@ public class CategoryProductService {
 	public void deleteProduct(int id) {
 		getProductById(id);
 		productRepository.deleteById(id);
+	}
+
+	public Page<Product> getProductsByCategoryId(int categoryId, Pageable pageable) {
+		return productRepository.findByCategoryId(categoryId, pageable);
 	}
 }
 

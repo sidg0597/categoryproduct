@@ -1,8 +1,8 @@
 package com.categoryProduct.controllers;
-
-import java.util.Iterator;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,14 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-
 import com.categoryProduct.helpers.CategoryProductResponseWrapper;
 import com.categoryProduct.models.Category;
 import com.categoryProduct.models.Product;
 import com.categoryProduct.services.CategoryProductService;
-
 import jakarta.validation.Valid;
 
 @RestController
@@ -31,16 +29,24 @@ public class CategoryProductController {
     // Category CRUD operations
 
     @GetMapping("/categories")
-    	public ResponseEntity<?> getAllCategories(){
-    	Iterable<Category> data = categoryProductService.getAllCategories();
-    	Iterator<Category> all_categories = data.iterator();
-    	if(!all_categories.hasNext()) {
-    		throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No categories Found");
-    	}
-    	CategoryProductResponseWrapper cprw = new CategoryProductResponseWrapper();
-    	cprw.setMessage("Record Found");
-    	cprw.setData(all_categories);
-    	return new ResponseEntity<>(cprw,HttpStatus.FOUND);
+//    	public ResponseEntity<?> getAllCategories(){
+//    	Iterable<Category> data = categoryProductService.getAllCategories();
+//    	Iterator<Category> all_categories = data.iterator();
+//    	if(!all_categories.hasNext()) {
+//    		throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No categories Found");
+//    	}
+//    	CategoryProductResponseWrapper cprw = new CategoryProductResponseWrapper();
+//    	cprw.setMessage("Record Found");
+//    	cprw.setData(all_categories);
+//    	return new ResponseEntity<>(cprw,HttpStatus.FOUND);
+//    }
+    
+    public ResponseEntity<Page<Category>> getAllCategories(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Category> categories = categoryProductService.getAllCategories(pageable);
+        return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
     @PostMapping("/categories")
@@ -82,18 +88,27 @@ public class CategoryProductController {
     // Product CRUD operations
 
     @GetMapping("/products")
-	public ResponseEntity<?> getAllProducts(){
-	Iterable<Product> data = categoryProductService.getAllProducts();
-	Iterator<Product> all_products = data.iterator();
-	if(!all_products.hasNext()) {
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No Products Found");
-	}
-	CategoryProductResponseWrapper cprw = new CategoryProductResponseWrapper();
-	cprw.setMessage("Record Found");
-	cprw.setData(all_products);
-	return new ResponseEntity<>(cprw,HttpStatus.FOUND);
-}
+//	public ResponseEntity<?> getAllProducts(){
+//	Iterable<Product> data = categoryProductService.getAllProducts();
+//	Iterator<Product> all_products = data.iterator();
+//	if(!all_products.hasNext()) {
+//		throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No Products Found");
+//	}
+//	CategoryProductResponseWrapper cprw = new CategoryProductResponseWrapper();
+//	cprw.setMessage("Record Found");
+//	cprw.setData(all_products);
+//	return new ResponseEntity<>(cprw,HttpStatus.FOUND);
+//}
 
+    public ResponseEntity<Page<Product>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> products = categoryProductService.getAllProducts(pageable);
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+
+    
 @PostMapping("/products/{id}")
 public ResponseEntity<?> createProduct(@PathVariable int id, @RequestBody @Valid  Product product){
 	Product productAdded = categoryProductService.createProduct(id,product);
